@@ -20,6 +20,7 @@ namespace ChobbyLauncher
                     : IntPtr.Zero);
             try
             {
+                ZkData.GlobalConst.Mode = ZkData.ModeType.Live;
                 var data = Environment.GetEnvironmentVariable("ZEROK_DATA_DIR");
                 if (string.IsNullOrEmpty(data)) throw new InvalidOperationException("ZEROK_DATA_DIR is required");
                 Directory.CreateDirectory(data);
