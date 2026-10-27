@@ -14,7 +14,9 @@ using System.Security;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+#if !ZK_MACOS
 using System.Windows.Forms;
+#endif
 using GameAnalyticsSDK.Net;
 using Newtonsoft.Json;
 using PlasmaDownloader;
@@ -163,7 +165,11 @@ namespace ChobbyLauncher
             {
                 LastUserAction = DateTime.Now;
                 MinimizeChobby();
+#if ZK_MACOS
+                System.Diagnostics.Process.Start(new ProcessStartInfo("/usr/bin/open") { ArgumentList = { args.Url } });
+#else
                 System.Diagnostics.Process.Start(args.Url);
+#endif
             }
             catch (Win32Exception)
             {
@@ -205,7 +211,9 @@ namespace ChobbyLauncher
                     info.cbSize = Convert.ToUInt32(Marshal.SizeOf(info));
                     WindowsApi.FlashWindowEx(ref info);
 
+#if !ZK_MACOS
                     SystemSounds.Exclamation.Play();
+#endif
                 }
             }
             catch (Exception ex)
@@ -220,7 +228,11 @@ namespace ChobbyLauncher
         {
             try
             {
+#if ZK_MACOS
+                System.Diagnostics.Process.Start(Environment.ProcessPath);
+#else
                 System.Diagnostics.Process.Start(Application.ExecutablePath);
+#endif
                 Environment.Exit(0);
             }
             catch (Exception ex)
@@ -656,7 +668,9 @@ namespace ChobbyLauncher
                             StartScriptContent = args.StartScriptContent
                         });
                         
+#if !ZK_MACOS
                         CrashReportHelper.CheckAndReportErrors(logs.ToString(), isOk, "Externally launched spring crashed with code " + process.ExitCode, null, args.Engine);
+#endif
                     };
                     process.EnableRaisingEvents = true;
                     process.Start();

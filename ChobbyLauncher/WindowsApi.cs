@@ -32,6 +32,9 @@ namespace ChobbyLauncher
         private static bool haveXprintIdle = true;
         public static TimeSpan CalculateIdleTime()
         {
+#if ZK_MACOS
+            return TimeSpan.FromSeconds(CGEventSourceSecondsSinceLastEventType(0, uint.MaxValue));
+#endif
             if (Environment.OSVersion.Platform == PlatformID.Unix)
             {
                 if (haveXprintIdle)
@@ -66,6 +69,11 @@ namespace ChobbyLauncher
 
         [DllImport("user32.dll")]
         static extern bool GetLastInputInfo(ref LASTINPUTINFO plii);
+
+#if ZK_MACOS
+        [DllImport("/System/Library/Frameworks/CoreGraphics.framework/CoreGraphics")]
+        private static extern double CGEventSourceSecondsSinceLastEventType(int state, uint eventType);
+#endif
 
         struct LASTINPUTINFO
         {

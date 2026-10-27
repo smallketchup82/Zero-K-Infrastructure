@@ -32,6 +32,9 @@ public class DiscordController : IDisposable
 
     public void Init()
     {
+#if ZK_MACOS
+        return; // Discord's legacy native library is not part of the macOS port.
+#endif
         try
         {
             DiscordRpc.Initialize(discordAppID, ref handlers, true, steamAppID);
@@ -91,7 +94,7 @@ public class DiscordController : IDisposable
     {
         try
         {
-            DiscordRpc.Shutdown();
+            if (isInitialized) DiscordRpc.Shutdown();
         }
         catch (Exception ex)
         {

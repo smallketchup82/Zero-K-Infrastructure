@@ -4,7 +4,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+#if !ZK_MACOS
 using System.Windows.Forms;
+#endif
 using GameAnalyticsSDK.Net;
 using Newtonsoft.Json;
 using PlasmaDownloader;
@@ -86,7 +88,11 @@ namespace ChobbyLauncher
                         var selfUpdater = new SelfChecker("Zero-K");
                         if (selfUpdater.CheckForUpdate())
                         {
+#if ZK_MACOS
+                            Trace.TraceWarning("Use an application bundle update for a newer launcher.");
+#else
                             MessageBox.Show($"New version of Zero-K is available - your version {selfUpdater.CurrentVersion}, server version {selfUpdater.LatestVersion}");
+#endif
                         };
                     }
 

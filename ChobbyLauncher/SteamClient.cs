@@ -274,7 +274,12 @@ namespace ChobbyLauncher
         {
             var buf = new byte[4096];
             uint ticketSize;
+#if ZK_MACOS
+            var identity = new SteamNetworkingIdentity();
+            SteamUser.GetAuthSessionTicket(buf, buf.Length, out ticketSize, ref identity);
+#else
             SteamUser.GetAuthSessionTicket(buf, buf.Length, out ticketSize);
+#endif
             var truncArray = new byte[ticketSize];
             Array.Copy(buf, truncArray, truncArray.Length);
             return truncArray;

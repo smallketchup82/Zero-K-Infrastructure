@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <RuntimeIdentifier>osx-arm64</RuntimeIdentifier>
+    <RuntimeFrameworkVersion>10.0.14</RuntimeFrameworkVersion>
+    <SelfContained>true</SelfContained>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+    <AssemblyName>Zero-K-Helper</AssemblyName>
+    <DefineConstants>TRACE;ZK_MACOS;STEAMWORKS_LIN_OSX</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LegacyClient Condition="'$(LegacyClient)' == ''">../../../build/client</LegacyClient>
+    <SteamworksSource Condition="'$(SteamworksSource)' == ''">../../../.cache/steamworks-source</SteamworksSource>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="MacProgram.cs;Chobbyla.cs;ChobbylaLocalListener.cs;ChobbyLoopbackMessages.cs;SteamClient.cs;SteamMessages.cs;SteamP2PPortProxy.cs;DiscordController.cs;DiscordRpc.cs;WindowsApi.cs;TextToSpeechBase.cs;TextToSpeechLinux.cs;STUN/**/*.cs" />
+    <Compile Include="$(SteamworksSource)/com.rlabrecque.steamworks.net/Runtime/**/*.cs" />
+    <Reference Include="$(LegacyClient)/*.dll" Exclude="$(LegacyClient)/Steamworks.NET.dll;$(LegacyClient)/Newtonsoft.Json.dll;$(LegacyClient)/System.*.dll;$(LegacyClient)/Microsoft.CSharp.dll" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+</Project>
