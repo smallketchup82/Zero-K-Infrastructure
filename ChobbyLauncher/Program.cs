@@ -49,7 +49,11 @@ namespace ChobbyLauncher
 
             ParseCommandLine(args, out connectLobbyID, out chobbyTag, out engineOverride);
 
-            var startupPath = Path.GetDirectoryName(Path.GetFullPath(Application.ExecutablePath));
+            var startupPath = Environment.GetEnvironmentVariable("ZEROK_DATA_DIR")
+                ?? Path.GetDirectoryName(Path.GetFullPath(Application.ExecutablePath));
+            startupPath = Path.GetFullPath(startupPath);
+            Directory.CreateDirectory(startupPath);
+            Directory.SetCurrentDirectory(startupPath);
 
             if (!SpringPaths.IsDirectoryWritable(startupPath))
             {
@@ -143,7 +147,7 @@ namespace ChobbyLauncher
 
         private static void RunWrapper(Chobbyla chobbyla, ulong connectLobbyID, TextWriter logWriter, StringBuilder logSb)
         {
-            if (!chobbyla.IsSteamFolder) // not steam, show gui
+            if (!chobbyla.IsSteamFolder && !chobbyla.IsBundled) // not steam or a bundle, show gui
             {
                 try
                 {

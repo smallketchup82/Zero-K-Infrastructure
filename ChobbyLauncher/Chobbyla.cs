@@ -21,6 +21,8 @@ namespace ChobbyLauncher
         private string chobbyTag;
         private string internalName;
         private bool isDev;
+        private readonly string bundledEngine = Environment.GetEnvironmentVariable("ZEROK_ENGINE_PATH");
+        public bool IsBundled => !string.IsNullOrEmpty(bundledEngine);
 
         public SpringPaths paths;
         public bool IsSteamFolder { get; private set; }
@@ -48,6 +50,8 @@ namespace ChobbyLauncher
         public Chobbyla(string rootPath, string chobbyTagOverride, string engineOverride)
         {
             paths = new SpringPaths(rootPath, false, true);
+            var resourceDirectory = Environment.GetEnvironmentVariable("ZEROK_RESOURCE_DIR");
+            if (!string.IsNullOrEmpty(resourceDirectory)) paths.AddDataDirectories(new[] { Path.GetFullPath(resourceDirectory) });
             chobbyTag = chobbyTagOverride ?? GlobalConst.DefaultChobbyTag;
             isDev = (chobbyTag == "dev") || (chobbyTag == "chobby:dev") || (chobbyTag == "zkmenu:dev");
             IsSteamFolder = File.Exists(Path.Combine(paths.WritableDirectory, "steamfolder.txt"));
@@ -60,6 +64,17 @@ namespace ChobbyLauncher
         {
             try
             {
+                if (IsBundled)
+                {
+                    if (!File.Exists(bundledEngine)) throw new FileNotFoundException("Bundled engine is missing", bundledEngine);
+                    internalName = Environment.GetEnvironmentVariable("ZEROK_CHOBBY_NAME");
+                    if (string.IsNullOrEmpty(internalName)) throw new InvalidOperationException("ZEROK_CHOBBY_NAME must identify the bundled lobby");
+                    engine = engine ?? "native-macos";
+                    // Bundle updates replace the engine, lobby and launcher together.
+                    // Keep writable user content and settings outside the application.
+                    return true;
+                }
+
                 PackageDownloader.Version ver = null;
                 internalName = null;
 
@@ -227,9 +242,13 @@ namespace ChobbyLauncher
             if (!Directory.Exists(widgetFolder)) Directory.CreateDirectory(widgetFolder);
             File.WriteAllText(Path.Combine(widgetFolder, "chobby_wrapper_port.txt"), loopbackPort.ToString());
 
-            process.StartInfo.FileName = paths.GetSpringExecutablePath(engineVersion);
-            process.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.GetSpringExecutablePath(engineVersion));
+            process.StartInfo.FileName = IsBundled ? bundledEngine : paths.GetSpringExecutablePath(engineVersion);
+            process.StartInfo.WorkingDirectory = IsBundled ? paths.WritableDirectory : Path.GetDirectoryName(process.StartInfo.FileName);
             process.StartInfo.Arguments = $"--menu \"{internalName}\"";
+            if (IsBundled)
+            {
+                process.StartInfo.Arguments += $" --isolation-dir \"{paths.WritableDirectory}\" --write-dir \"{paths.WritableDirectory}\" --config \"{paths.GetSpringConfigPath()}\"";
+            }
 
             process.StartInfo.RedirectStandardOutput = true;
             process.StartInfo.RedirectStandardError = true;
