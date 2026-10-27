@@ -12,8 +12,12 @@ namespace ChobbyLauncher
             TextToSpeechBase ret = null;
             try
             {
+#if ZK_MACOS
+                ret = new TextToSpeechMac();
+#else
                 if (Environment.OSVersion.Platform != PlatformID.Unix) ret = Activator.CreateInstance(Type.GetType("ChobbyLauncher.TextToSpeechWindows")) as TextToSpeechBase;
                 else ret = new TextToSpeechLinux();
+#endif
             }
             catch (Exception ex)
             {

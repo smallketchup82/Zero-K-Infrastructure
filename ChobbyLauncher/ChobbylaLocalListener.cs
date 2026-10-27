@@ -272,7 +272,11 @@ namespace ChobbyLauncher
             try
             {
                 MinimizeChobby();
+#if ZK_MACOS
+                System.Diagnostics.Process.Start(new ProcessStartInfo("/usr/bin/open") { ArgumentList = { chobbyla.paths.WritableDirectory } });
+#else
                 System.Diagnostics.Process.Start(chobbyla.paths.WritableDirectory);
+#endif
             }
             catch (Exception ex)
             {

@@ -14,7 +14,7 @@
     <SteamworksSource Condition="'$(SteamworksSource)' == ''">../../../.cache/steamworks-source</SteamworksSource>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="MacProgram.cs;Chobbyla.cs;ChobbylaLocalListener.cs;ChobbyLoopbackMessages.cs;SteamClient.cs;SteamMessages.cs;SteamP2PPortProxy.cs;DiscordController.cs;DiscordRpc.cs;WindowsApi.cs;TextToSpeechBase.cs;TextToSpeechLinux.cs;STUN/**/*.cs" />
+    <Compile Include="MacProgram.cs;Chobbyla.cs;ChobbylaLocalListener.cs;ChobbyLoopbackMessages.cs;SteamClient.cs;SteamMessages.cs;SteamP2PPortProxy.cs;DiscordController.cs;DiscordRpc.cs;WindowsApi.cs;TextToSpeechBase.cs;TextToSpeechMac.cs;STUN/**/*.cs" />
     <Compile Include="$(SteamworksSource)/com.rlabrecque.steamworks.net/Runtime/**/*.cs" />
     <Reference Include="$(LegacyClient)/*.dll" Exclude="$(LegacyClient)/Steamworks.NET.dll;$(LegacyClient)/Newtonsoft.Json.dll;$(LegacyClient)/System.*.dll;$(LegacyClient)/Microsoft.CSharp.dll" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
